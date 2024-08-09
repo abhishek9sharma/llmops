@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  streamlit-chat:
+    build: ./streamlit-chat
+    ports:
+      - "8501:8501"
+    depends_on:
+      - fastapi-backend
+
+  fastapi-backend:
+    build: ./fastapi-backend
+    ports:
+      - "8001:8001"
+
