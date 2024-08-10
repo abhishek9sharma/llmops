@@ -3,6 +3,7 @@ version: '3.8'
 services:
   streamlit-chat:
     build: ./streamlit-chat
+    container_name: streamlit
     ports:
       - "8501:8501"
     depends_on:
@@ -10,6 +11,24 @@ services:
 
   fastapi-backend:
     build: ./fastapi-backend
+    container_name: backend
+
     ports:
       - "8001:8001"
 
+  ollama-backend:
+    build: ./ollama-backend
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              capabilities: [gpu]
+              count: all
+    volumes:
+      - ollama:/root/.ollama
+volumes:
+  ollama:
