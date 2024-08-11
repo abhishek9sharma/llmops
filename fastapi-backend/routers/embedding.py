@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 from pydantic import BaseModel
 from src.model import EmbeddingModel, get_embedder
 from src.vector_db import ingest_document
+from uuid import UUID
 
 embedding_router = APIRouter()
 
@@ -33,8 +34,18 @@ async def generate_embedding_request(
 
 @embedding_router.post("/update_context/")
 async def rag_embed(
-    file: UploadFile = File(...), embedder: EmbeddingModel = Depends(get_embedder)
+    request_id: UUID,
+    file: UploadFile = File(...),
+    embedder: EmbeddingModel = Depends(get_embedder),
 ):
-    contents = await file.read()
-    context_id = ingest_document(contents, embedder)
-    return {"message": "Code processed and stored in chroma"}
+    try:
+        if file is None:
+            raise ValueError("File is missing")
+        contents = await file.read()
+        if not contents:
+            raise ValueError("File is empty")
+        decoded_contents = contents.decode("utf-8")
+        cid = ingest_document(request_id, decoded_contents, embedder)
+        return {"message": f"Code processed and stored in chroma CID:{str(cid)} <--> RID:{request_id}"}
+    except Exception as e:
+        return {"error": str(e)}
