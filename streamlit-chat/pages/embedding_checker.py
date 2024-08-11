@@ -2,6 +2,35 @@
 
 import requests
 import streamlit as st
+import uuid
+from typing import Tuple
+
+
+def send_file_to_fastapi(content: str, document_id: str) -> Tuple[bool, str]:
+    """
+    Sends a file to the specified FastAPI endpoint and returns a tuple indicating success and the response message.
+
+    Parameters:
+    - file_path: Path to the file to be uploaded.
+    - document_id: The UUID to be included in the URL path.
+
+    Returns:
+    A tuple containing a boolean indicating success and the response message.
+    """
+    # url = f"http://fastapi-backend:8001/update_context/request_id={document_id}"
+    # with open(file_path, "rb") as file:
+    #     files = {"file": ("filename.txt", file, "text/plain")}
+    #     response = requests.post(url, files=files)
+    # Assuming the FastAPI endpoint is running locally on port 8000
+    response = requests.post(
+        f"http://fastapi-backend:8001/embedding/update_context",
+        json={"contents": content, "request_id": document_id},
+    )
+    # return response.json()
+    if response.status_code == 200:
+        return True, response.json()["message"]
+    else:
+        return False, response.text
 
 
 def upload_file():
@@ -64,6 +93,28 @@ def main():
             st.write(embedding)
         else:
             st.write("Please upload a code file.")
+
+    st.title("Update Context")
+
+    uploaded_file = st.file_uploader("Choose a file", type=["py", "java"])
+
+    if uploaded_file is not None:
+        # Generate a random UUID for demonstration purposes
+        st.write(uploaded_file.getvalue())
+
+        if st.button("Updaye Context"):
+            # Send the file to the FastAPI endpoint
+            document_id = uuid.uuid4()
+            document_id_str = str(
+                document_id
+            )  # Replace with actual UUID generation logic
+            file_content = uploaded_file.read().decode("utf-8")
+            success, message = send_file_to_fastapi(file_content, document_id_str)
+
+            if success:
+                st.success(message)
+            else:
+                st.error(f"Failed to upload file: {message}")
 
 
 if __name__ == "__main__":

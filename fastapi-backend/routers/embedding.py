@@ -13,6 +13,11 @@ class CodeEmbeddingRequest(BaseModel):
     code: str
 
 
+class CodeContextRequest(BaseModel):
+    request_id: UUID
+    contents: str
+
+
 @embedding_router.post("/generate-embedding")
 async def generate_embedding_request(
     request_data: CodeEmbeddingRequest, embedder: EmbeddingModel = Depends(get_embedder)
@@ -33,19 +38,23 @@ async def generate_embedding_request(
 
 
 @embedding_router.post("/update_context/")
-async def rag_embed(
-    request_id: UUID,
-    file: UploadFile = File(...),
+async def update_context(
+    # request_id: UUID,
+    # file: UploadFile = File(...),
+    # contents: str,
+    request_data: CodeContextRequest,
     embedder: EmbeddingModel = Depends(get_embedder),
 ):
     try:
-        if file is None:
-            raise ValueError("File is missing")
-        contents = await file.read()
-        if not contents:
-            raise ValueError("File is empty")
-        decoded_contents = contents.decode("utf-8")
-        cid = ingest_document(request_id, decoded_contents, embedder)
-        return {"message": f"Code processed and stored in chroma CID:{str(cid)} <--> RID:{request_id}"}
+        # if file is None:
+        #    raise ValueError("File is missing")
+        # contents = await file.read()
+        if not request_data.contents:
+            raise ValueError("empty")
+        # decoded_contents = contents.decode("utf-8")
+        cid = ingest_document(request_data.request_id, request_data.contents, embedder)
+        return {
+            "message": f"Code processed and stored in chroma CID:{str(cid)} <--> RID:{request_data.request_id}"
+        }
     except Exception as e:
         return {"error": str(e)}
