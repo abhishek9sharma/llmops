@@ -29,7 +29,7 @@ def send_file_to_fastapi(content: str, document_id: str) -> Tuple[bool, str]:
     )
     # return response.json()
     if response.status_code == 200:
-        return True, response.json()#["message"]
+        return True, response.json()  # ["message"]
     else:
         return False, response.text
 

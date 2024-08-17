@@ -4,13 +4,18 @@ from uuid import UUID
 from fastapi import APIRouter, Depends, FastAPI, File, UploadFile
 from pydantic import BaseModel
 from src.model import EmbeddingModel, get_embedder
-from src.vector_db import ingest_document
+from src.vector_db import ingest_document, get_context
 
 embedding_router = APIRouter()
 
 
 class CodeEmbeddingRequest(BaseModel):
     code: str
+
+
+class QueryVectorDB(BaseModel):
+    collection_name: str
+    query: str
 
 
 class CodeContextRequest(BaseModel):
@@ -58,3 +63,13 @@ async def update_context(
         }
     except Exception as e:
         return {"error": str(e)}
+
+
+@embedding_router.post("/get_context/")
+async def update_context(
+    # request_id: UUID,
+    # file: UploadFile = File(...),
+    # contents: str,
+    request_data: QueryVectorDB,
+):
+    return get_context(request_data.collection_name, request_data.query)
