@@ -7,7 +7,7 @@ def chunk_doc(document):
     return document.split()
 
 
-def ingest_document(request_id, document, embedder):
+def ingest_document(request_id, document, embedder, collection_name):
     print(document)
     chunks = chunk_doc(document)
     chunk_embeddings = embedder.model.encode(chunks)
@@ -16,7 +16,7 @@ def ingest_document(request_id, document, embedder):
     ids = [f"{request_id}_{i}" for i in range(len(chunks))]
     collection = client.get_or_create_collection(
         # name=f"context_{request_id}",
-        name="code"
+        name=collection_name
     )
     collection.add(documents=chunks, embeddings=chunk_embeddings, ids=ids)
 

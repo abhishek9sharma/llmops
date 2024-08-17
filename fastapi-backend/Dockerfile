@@ -10,7 +10,7 @@ WORKDIR /app
 # Install any needed packages specified in requirements.txt
 #RUN pip install --no-cache-dir -r requirements.txt
 RUN pip install fastapi uvicorn sentence_transformers langchain==0.1.12 openai==1.7.2  langchain-openai==0.0.2 langchain==0.1.12 openai==1.7.2 \
-    langchainhub==0.1.14 python-multipart chromadb==0.4.22 pandas
+    langchainhub==0.1.14 python-multipart chromadb==0.4.22 pandas tree-sitter tree_sitter_languages
 
 #RUN pip install langchain-community<0.1 
    
