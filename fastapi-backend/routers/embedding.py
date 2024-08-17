@@ -1,10 +1,10 @@
 import json
-from fastapi import FastAPI, File, UploadFile
-from fastapi import APIRouter, Depends
+from uuid import UUID
+
+from fastapi import APIRouter, Depends, FastAPI, File, UploadFile
 from pydantic import BaseModel
 from src.model import EmbeddingModel, get_embedder
 from src.vector_db import ingest_document
-from uuid import UUID
 
 embedding_router = APIRouter()
 

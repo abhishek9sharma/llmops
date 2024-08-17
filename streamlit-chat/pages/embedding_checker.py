@@ -1,9 +1,10 @@
 # Placeholder Streamlit App
 
-import requests
-import streamlit as st
 import uuid
 from typing import Tuple
+
+import requests
+import streamlit as st
 
 
 def send_file_to_fastapi(content: str, document_id: str) -> Tuple[bool, str]:
@@ -28,7 +29,7 @@ def send_file_to_fastapi(content: str, document_id: str) -> Tuple[bool, str]:
     )
     # return response.json()
     if response.status_code == 200:
-        return True, response.json()["message"]
+        return True, response.json()#["message"]
     else:
         return False, response.text
 
@@ -71,9 +72,9 @@ def fetch_messages_from_backend():
 def main():
     st.title("Streamlit Chat Frontend")
 
-    # Input field for messages
-    new_message_sender = st.text_input("Your Name:", "")
-    new_message_text = st.text_input("Enter your message:")
+    # # Input field for messages
+    # new_message_sender = st.text_input("Your Name:", "")
+    # new_message_text = st.text_input("Enter your message:")
 
     # Button to submit the message
     if st.button("Submit"):
@@ -102,7 +103,7 @@ def main():
         # Generate a random UUID for demonstration purposes
         st.write(uploaded_file.getvalue())
 
-        if st.button("Updaye Context"):
+        if st.button("Update Context"):
             # Send the file to the FastAPI endpoint
             document_id = uuid.uuid4()
             document_id_str = str(

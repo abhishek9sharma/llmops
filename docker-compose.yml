@@ -6,16 +6,25 @@ services:
     container_name: streamlit
     ports:
       - "8501:8501"
-    depends_on:
-      - fastapi-backend
+    # depends_on:
+    #   - fastapi-backend
+    volumes:
+      - ./streamlit-chat:/app
 
   fastapi-backend:
     build: ./fastapi-backend
     container_name: backend
-
     ports:
       - "8001:8001"
+    volumes:
+      - ./fastapi-backendt:/app
 
+  vector-backend:
+    image: chromadb/chroma:latest
+    container_name:  vector-backend
+    ports:
+      - 8000:8000
+      
   ollama-backend:
     build: ./ollama-backend
     container_name: ollama
@@ -30,5 +39,8 @@ services:
               count: all
     volumes:
       - ollama:/root/.ollama
+
+
 volumes:
   ollama:
+  
