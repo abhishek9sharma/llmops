@@ -1,6 +1,21 @@
 version: '3.8'
 
 services:
+  # ollama-backend:
+  #   build: ./ollama-backend
+  #   container_name: ollama
+  #   ports:
+  #     - "11434:11434"
+  #   # deploy:
+  #   #   resources:
+  #   #     reservations:
+  #   #       devices:
+  #   #         - driver: nvidia
+  #   #           capabilities: [gpu]
+  #   #           count: all
+  #   volumes:
+  #     - ollama:/root/.ollama
+  
   streamlit-chat:
     build: ./streamlit-chat
     container_name: streamlit
@@ -25,22 +40,31 @@ services:
     ports:
       - 8000:8000
       
-  ollama-backend:
-    build: ./ollama-backend
-    container_name: ollama
-    ports:
-      - "11434:11434"
-    # deploy:
-    #   resources:
-    #     reservations:
-    #       devices:
-    #         - driver: nvidia
-    #           capabilities: [gpu]
-    #           count: all
-    volumes:
-      - ollama:/root/.ollama
+  grserver:
+    build: 
+      context : ./grserver
+      args:
+        - GR_TOKEN=$GR_TOKEN
+    container_name: llmops_grserver
 
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./grserver:/grserver
+
+  phoenix:
+    image: arizephoenix/phoenix:latest # Must be greater than 4.0 version to work
+    ports:
+      - 6006:6006  # PHOENIX_PORT
+      - 4317:4317  # PHOENIX_GRPC_PORT
+      - 9090:9090  # [Optional] PROMETHEUS PORT IF ENABLED
+    environment:
+      - PHOENIX_WORKING_DIR=/mnt/data
+    volumes:
+      - phoenix_data:/mnt/data   # PHOENIX_WORKING_DIR
 
 volumes:
+  phoenix_data:
+    driver: local
   ollama:
   

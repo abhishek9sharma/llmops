@@ -1,0 +1,11 @@
+fastapi
+pytest
+guardrails-ai==0.6.2
+uvicorn
+nltk
+arize-otel
+arize-phoenix
+arize-phoenix-otel
+openinference-instrumentation
+openinference-instrumentation-guardrails
+openinference-semantic-conventions

@@ -163,3 +163,4 @@ cython_debug/
 *.log
 setuprepo.sh
 log.txt
+.DS_Store
