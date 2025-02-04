@@ -17,7 +17,7 @@ def get_models():
 
 
 def openai_endpoint(endpoint, model_name, messages, use_context="NO"):
-    st.write(messages)
+    # st.write(messages)
     if use_context == "YES":
         latest_message = messages[-1]["content"]
         context = query_collection(latest_message)
@@ -25,7 +25,7 @@ def openai_endpoint(endpoint, model_name, messages, use_context="NO"):
         messages[-1]["content"] = formatted_prompt = format_question_with_context(
             latest_message, context_documents
         )
-    st.write(messages)
+    # st.write(messages)
     client = OpenAI(base_url=endpoint, api_key="ollama")
     return client.chat.completions.create(
         model=st.session_state["openai_model"],
@@ -42,9 +42,9 @@ def setup_chat(endpoint, model_name, use_context="NO"):
     if "messages" not in st.session_state:
         st.session_state.messages = []
 
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.markdown(message["content"])
+    # for message in st.session_state.messages:
+    #     with st.chat_message(message["role"]):
+    #         st.markdown(message["content"])
 
     if prompt := st.chat_input("What is up?"):
         # st.write(prompt)

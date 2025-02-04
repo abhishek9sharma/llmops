@@ -1,5 +1,6 @@
-from src.model import get_embedder
 from uuid import UUID
+
+from src.model import get_embedder
 
 embedder = get_embedder()
 from src.vector_db import *
