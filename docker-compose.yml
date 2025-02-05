@@ -16,29 +16,29 @@ services:
   #   volumes:
   #     - ollama:/root/.ollama
   
-  streamlit-chat:
-    build: ./streamlit-chat
-    container_name: streamlit
-    ports:
-      - "8501:8501"
-    # depends_on:
-    #   - fastapi-backend
-    volumes:
-      - ./streamlit-chat:/app
+  # streamlit-chat:
+  #   build: ./streamlit-chat
+  #   container_name: streamlit
+  #   ports:
+  #     - "8501:8501"
+  #   # depends_on:
+  #   #   - fastapi-backend
+  #   volumes:
+  #     - ./streamlit-chat:/app
 
-  fastapi-backend:
-    build: ./fastapi-backend
-    container_name: backend
-    ports:
-      - "8001:8001"
-    volumes:
-      - ./fastapi-backend:/app
+  # fastapi-backend:
+  #   build: ./fastapi-backend
+  #   container_name: backend
+  #   ports:
+  #     - "8001:8001"
+  #   volumes:
+  #     - ./fastapi-backend:/app
 
-  vector-backend:
-    image: chromadb/chroma:latest
-    container_name:  vector-backend
-    ports:
-      - 8000:8000
+  # vector-backend:
+  #   image: chromadb/chroma:latest
+  #   container_name:  vector-backend
+  #   ports:
+  #     - 8000:8000
       
   grserver:
     build: 
@@ -54,6 +54,7 @@ services:
 
   phoenix:
     image: arizephoenix/phoenix:latest # Must be greater than 4.0 version to work
+    container_name: arize
     ports:
       - 6006:6006  # PHOENIX_PORT
       - 4317:4317  # PHOENIX_GRPC_PORT
