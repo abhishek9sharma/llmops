@@ -15,6 +15,14 @@ class ChatCompletionsReq(BaseModel):
     stream: Optional[bool] = True
 
 
+class ChatCompletionsReqGuarded(BaseModel):
+    model: str
+    messages: List[Message]
+    max_tokens: Optional[int] = 100
+    stream: Optional[bool] = True
+    guard_to_apply: Optional[str] = None
+
+
 data = {
     "messages": [{"role": "user", "content": "tell me a joke"}],
     "model": "gpt-4",

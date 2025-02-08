@@ -11,6 +11,8 @@ RUN python -m pip install uv
 RUN python -m uv pip install -e . --prerelease=allow
 RUN python -m nltk.downloader -d /opt/nltk_data punkt
 EXPOSE 8001
-RUN guardrails configure --disable-metrics --disable-remote-inferencing --token $GR_TOKEN
+RUN guardrails configure --disable-metrics --enable-remote-inferencing --token $GR_TOKEN
 RUN guardrails hub install hub://guardrails/profanity_free
+RUN guardrails hub install hub://guardrails/llamaguard_7b
+RUN guardrails hub install hub://guardrails/ban_list
 CMD ["uvicorn", "grserver.restapi.rootsvc:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]
