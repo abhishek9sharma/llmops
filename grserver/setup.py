@@ -8,7 +8,7 @@ with open("requirements.txt", "r") as rqfile:
 setup(
     name="grserver",
     version="0.0.1",
-    description="fgrserver",
+    description="grserver",
     long_description_content_type="text/markdown",
     url="https://github.com/abhishek9sharma/grserver",
     author="Abhishek Sharma",

@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM python:3.12
+FROM python:3.10
 EXPOSE 8001
 ARG GR_TOKEN
 RUN apt-get update && apt-get install -y git

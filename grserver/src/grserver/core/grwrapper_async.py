@@ -35,6 +35,7 @@ async def acompletion_gg(payload_in: ChatCompletionsReq):
 
     async for result in fragment_generator:
         chunk_string = f"data: {json.dumps(outcome_to_stream_response(validation_outcome=result))}\n\n"
+        print(chunk_string)
         yield chunk_string
         # yield str(result) + "\n"
         # yield "############################################\n\n"
