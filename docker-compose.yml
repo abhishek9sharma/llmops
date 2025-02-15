@@ -46,7 +46,8 @@ services:
       args:
         - GR_TOKEN=$GR_TOKEN
     container_name: llmops_grserver
-
+    env_file:
+      - .env
     ports:
       - "8001:8001"
     volumes:

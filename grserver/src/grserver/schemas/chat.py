@@ -23,11 +23,11 @@ class ChatCompletionsReqGuarded(BaseModel):
     guard_to_apply: Optional[str] = None
 
 
-data = {
-    "messages": [{"role": "user", "content": "tell me a joke"}],
-    "model": "gpt-4",
-    "max_tokens": 1024,
-    "stream": True,
-}
+# data = {
+#     "messages": [{"role": "user", "content": "tell me a joke"}],
+#     "model": "gpt-4",
+#     "max_tokens": 1024,
+#     "stream": True,
+# }
 # x = ChatCompletionsReq(**data)
 # print(x)
