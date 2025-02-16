@@ -71,3 +71,21 @@ def get_config_sync(guard_to_apply: str = None):
         )
         # print(guard_x)
     return api_key, api_base, model, guard_x
+
+
+def outcome_to_stream_response_err(error_str):
+    stream_chunk_template = {
+        "choices": [
+            {
+                "delta": {"content": error_str},
+            }
+        ],
+        "guardrails": {
+            "reask": None,
+            "validation_passed": False,
+            "error": error_str,
+        },
+    }
+    stream_chunk = stream_chunk_template
+    stream_chunk["choices"][0]["delta"]["content"] = error_str
+    return stream_chunk
