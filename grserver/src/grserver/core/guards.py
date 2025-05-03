@@ -1,4 +1,4 @@
-from guardrails.hub import BanList, LlamaGuard7B, ToxicLanguage,ProfanityFree
+from guardrails.hub import BanList, LlamaGuard7B, ProfanityFree, ToxicLanguage
 
 guard_map = {
     "Profanity": ProfanityFree,
@@ -6,4 +6,3 @@ guard_map = {
     "BanList": BanList(banned_words=["codename", "athena"]),
     "ToxicLanguage": ToxicLanguage,
 }
-

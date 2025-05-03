@@ -40,7 +40,7 @@ def chatcompletion(chat_req: ChatCompletionsReqGuarded):
         for result in completion_gg(chat_req):
             chunk_string = f"data: {json.dumps(outcome_to_stream_response(validation_outcome=result))}\n\n"
             yield chunk_string
-            #yield str(result) + "\n"
-            #yield "############################################\n\n"
+            # yield str(result) + "\n"
+            # yield "############################################\n\n"
 
     return StreamingResponse(stream_responses(), media_type="text/event-stream")
