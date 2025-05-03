@@ -2,6 +2,7 @@ import os
 
 import guardrails as gd
 from guardrails import OnFailAction
+from guardrails.hub import ProfanityFree
 
 from grserver.core.guards import guard_map
 from grserver.schemas.chat import ChatCompletionsReq, ChatCompletionsReqGuarded
@@ -39,7 +40,7 @@ def convert_to_chat_completions_req(
     )
 
 
-@trace_calls
+##@trace_calls
 def get_config(guard_to_apply: str = None):
     api_key = os.environ["OPEN_AI_KEY"]
     api_base = "https://api.openai.com/v1"
@@ -56,18 +57,17 @@ def get_config(guard_to_apply: str = None):
     return api_key, api_base, model, guard_x
 
 
-@trace_calls
-def get_config_sync(guard_to_apply: str = None):
-    api_key = os.environ["OPEN_AI_KEY"]
-    api_base = "https://api.openai.com/v1"
-    model = "gpt-4o-mini"
-    if guard_to_apply is None:
+##@trace_calls
+def get_guards(guards_to_apply=None):
+    gL = []
+    if guards_to_apply is None:
         guard_x = gd.Guard(name="Profanity").use(
             ProfanityFree, on_fail=OnFailAction.NOOP
         )
     else:
-        guard_x = gd.Guard(name=guard_to_apply).use(
-            guard_map[guard_to_apply], on_fail=OnFailAction.EXCEPTION
-        )
-        # print(guard_x)
-    return api_key, api_base, model, guard_x
+        # for g in guard_to_apply:
+        gL = [guard_map[g] for g in guards_to_apply]
+        print("gL", gL)
+        guard_x = gd.Guard(name="GG").use_many(*gL)
+        # .append(guard_x)
+    return guard_x

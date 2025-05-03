@@ -13,8 +13,6 @@ def get_available_models():
     return [model.strip() for model in models]
 
 
-
-
 def get_llm_config():
     """
     Dynamically load available backend configurations from environment variables.
@@ -38,6 +36,7 @@ def get_llm_config():
                     configs[model.strip()] = configs[backend]
     return configs
 
+
 def chat_with_model(model, message, history):
     """
     Modified to automatically select backend based on model name.
@@ -56,8 +55,8 @@ def chat_with_model(model, message, history):
     for chunk in response:
         yield chunk.choices[0].delta.content
 
+    # return response.get("content", response)
 
-    #return response.get("content", response)
 
 # Sidebar: Model selection
 st.sidebar.title("Settings")
@@ -83,23 +82,23 @@ if prompt := st.chat_input("Type your message here..."):
     # Display user message in chat message container
     with st.chat_message("user"):
         st.markdown(prompt)
-    
+
     # Display assistant response in chat message container
     with st.chat_message("assistant"):
         response_placeholder = st.empty()
         full_response = ""
-        
+
         # Get streaming response
         response = chat_with_model(selected_model, prompt, st.session_state.messages)
-        
+
         # Stream the response
         for chunk in response:
             if chunk is not None:
                 full_response += chunk
                 response_placeholder.markdown(full_response + "▌")
-            
+
         # Remove the cursor and show final response
         response_placeholder.markdown(full_response)
-    
+
     # Add assistant response to chat history
     st.session_state.messages.append({"role": "assistant", "content": full_response})

@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import List, Optional, Set
 
 from pydantic import BaseModel
 
@@ -15,19 +15,19 @@ class ChatCompletionsReq(BaseModel):
     stream: Optional[bool] = True
 
 
-class ChatCompletionsReqGuarded(BaseModel):
-    model: str
-    messages: List[Message]
-    max_tokens: Optional[int] = 100
-    stream: Optional[bool] = True
-    guard_to_apply: Optional[str] = None
+# class GuardAttrs(BaseModel):
+#     input: Optional[bool] = False
+#     output: Optional[bool] = False
 
 
-# data = {
-#     "messages": [{"role": "user", "content": "tell me a joke"}],
-#     "model": "gpt-4",
-#     "max_tokens": 1024,
-#     "stream": True,
-# }
-# x = ChatCompletionsReq(**data)
-# print(x)
+class Guard(BaseModel):
+    name: str
+
+
+class ChatCompletionsReqGuarded(ChatCompletionsReq):
+    api_key: Optional[str]
+    api_base: Optional[str]
+    org_api_base: Optional[str]
+    guards_to_apply: Optional[
+        Set[str]
+    ] = None  # Changed to support nested Guard objects
