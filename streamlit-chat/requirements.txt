@@ -1,4 +1,2 @@
 streamlit
-ollama
-openai
-guardrails-ai
+litellm
