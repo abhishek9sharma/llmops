@@ -37,7 +37,23 @@ def get_llm_config():
     return configs
 
 
-def chat_with_model(model, message, history):
+def get_available_guards():
+    try:
+        import requests
+
+        response = requests.get("http://localhost:8001/available_guards")
+        guards_data = response.json()  # Convert response to dict
+        if len(guards_data) == 0:
+            print("No guards available.")
+            return None
+
+        return list(guards_data.keys())  # Return just the keys as a lis
+    except requests.RequestException as e:
+        print(f"Error fetching guards: {e}")
+        return ["BanList"]  # Return an empty list if there's an error
+
+
+def chat_with_model(model, message, hisory, guards_to_apply_str=None):
     """
     Modified to automatically select backend based on model name.
     """
@@ -45,13 +61,29 @@ def chat_with_model(model, message, history):
     current_config = configs.get(model)
     if not current_config:
         raise ValueError(f"No configuration found for model: {model}")
-    response = completion(
-        api_base=current_config["endpoint"],
-        api_key=current_config["api_key"],
-        model=model,
-        messages=[{"role": "user", "content": message}],
-        stream=True,
-    )
+    GR_SERVER = os.environ.get("GR_SERVER", "http://localhost:8001/guarded_sync")
+    if guards_to_apply_str is None or guards_to_apply_str == "":
+        # st.write("No guards to apply")
+        response = completion(
+            api_base=current_config["endpoint"],
+            api_key=current_config["api_key"],
+            model=model,
+            messages=[{"role": "user", "content": message}],
+            stream=True,
+        )
+    else:
+        response = completion(
+            api_base=GR_SERVER,
+            api_key=current_config["api_key"],
+            model=model,
+            messages=[{"role": "user", "content": message}],
+            stream=True,
+            max_tokens=50,
+            extra_body={
+                "org_api_base": current_config["endpoint"],
+                "guards_to_apply": guards_to_apply_str,
+            },
+        )
     for chunk in response:
         yield chunk.choices[0].delta.content
 
@@ -62,6 +94,15 @@ def chat_with_model(model, message, history):
 st.sidebar.title("Settings")
 available_models = get_available_models()
 selected_model = st.sidebar.selectbox("Choose a model", available_models)
+
+
+available_guards = get_available_guards()
+print(available_guards)
+if available_guards:
+    guards_to_apply = st.sidebar.multiselect("Choose Guards", available_guards)
+    guards_to_apply_str = ",".join(guards_to_apply)
+else:
+    guards_to_apply_str = None
 
 # Main Chat Area
 st.title("AI Chat Assistant")
@@ -89,7 +130,9 @@ if prompt := st.chat_input("Type your message here..."):
         full_response = ""
 
         # Get streaming response
-        response = chat_with_model(selected_model, prompt, st.session_state.messages)
+        response = chat_with_model(
+            selected_model, prompt, st.session_state.messages, guards_to_apply_str
+        )
 
         # Stream the response
         for chunk in response:

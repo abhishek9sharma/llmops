@@ -16,4 +16,5 @@ EXPOSE 8001
 RUN guardrails configure --disable-metrics --enable-remote-inferencing --token ${GR_TOKEN}
 #RUN guardrails hub install hub://guardrails/toxic_language
 RUN guardrails hub install hub://guardrails/ban_list
+RUN  guardrails hub install hub://guardrails/profanity_free
 CMD ["uvicorn", "grserver.restapi.rootsvc:app", "--host", "0.0.0.0", "--port", "8001", "--reload"]

@@ -2,6 +2,7 @@ import json
 import os
 
 import litellm
+from fastapi import Request
 
 from grserver.core.common import (convert_to_chat_completions_req, get_config,
                                   outcome_to_stream_response)

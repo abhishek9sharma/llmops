@@ -25,8 +25,9 @@ class Guard(BaseModel):
 
 
 class ChatCompletionsReqGuarded(ChatCompletionsReq):
-    api_key: Optional[str]
-    api_base: Optional[str]
+    api_key: Optional[str] = None
+    api_base: Optional[str] = None
+    extra_body: Optional[dict] = None
     org_api_base: Optional[str]
     guards_to_apply: Optional[
         Set[str]
