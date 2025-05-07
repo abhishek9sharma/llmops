@@ -50,7 +50,7 @@ def get_available_guards():
         return list(guards_data.keys())  # Return just the keys as a lis
     except requests.RequestException as e:
         print(f"Error fetching guards: {e}")
-        return ["BanList"]  # Return an empty list if there's an error
+        return ["UNKNOWN"]  # Return an empty list if there's an error
 
 
 def chat_with_model(model, message, hisory, guards_to_apply_str=None):
