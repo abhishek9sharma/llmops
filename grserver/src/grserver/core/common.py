@@ -116,5 +116,6 @@ def get_guards(guards_to_apply=None):
         gL = [guard_map[g] for g in guards_to_apply]
         print("gL", gL)
         guard_x = gd.Guard(name="GG").use_many(*gL)
-        # .append(guard_x)
+        print("guard_x", guard_x)
+        #gL.append(guard_x)
     return guard_x

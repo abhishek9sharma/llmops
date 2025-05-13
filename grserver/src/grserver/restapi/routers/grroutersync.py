@@ -18,8 +18,8 @@ router = APIRouter()
 
 # @trace_calls
 def completion_gg(payload_in: ChatCompletionsReqGuarded, api_key: str):
-    print("payload_in", payload_in.model)
     guards = get_guards(payload_in.guards_to_apply)
+    print("GUARDS", guards)
     api_base = payload_in.org_api_base
     api_key = api_key
     model = payload_in.model
@@ -29,18 +29,20 @@ def completion_gg(payload_in: ChatCompletionsReqGuarded, api_key: str):
     open_ai_payload = open_ai_payload.model_dump()
 
     # try:
+    print(api_base, api_key)
     fragment_generator = guards(
         litellm.completion,
         api_base=api_base,
         api_key=api_key,
         **open_ai_payload,
     )
+    print("fragment_generator", fragment_generator)
     return fragment_generator
 
 
 @router.post("/chat/completions")
 def chatcompletion(chat_req: ChatCompletionsReqGuarded, request: Request):
-
+    print("chat_req", chat_req)
     # Extract valies form header
     api_key = request.headers.get("Authorization").replace("Bearer ", "")
     chat_req.model = (
@@ -51,6 +53,7 @@ def chatcompletion(chat_req: ChatCompletionsReqGuarded, request: Request):
     def stream_responses():
         try:
             for result in completion_gg(chat_req, api_key):
+
                 chunk = json.dumps(
                     outcome_to_stream_response(
                         validation_outcome=result, ID=ID, model=chat_req.model
@@ -61,13 +64,14 @@ def chatcompletion(chat_req: ChatCompletionsReqGuarded, request: Request):
                 # chunk_string = f"data: {json.dumps(outcome_to_stream_response(validation_outcome=result))}\n\n"
                 # yield chunk_string
         except Exception as e:
+            print(e)
             error_strs = (
                 "I cannot respond further as Guardrails has failed. Please try again."
             )
             for word in error_strs.split():
                 chunk = json.dumps(
                     outcome_to_stream_response(
-                        validation_outcome=result, ID=ID, model=chat_req.model
+                        validation_outcome=word, ID=ID, model=chat_req.model
                     )
                 )
                 ystr = f"data: {chunk}\n\n"

@@ -13,6 +13,7 @@ services:
       - "8001:8001"
     volumes:
       - ./grserver:/grserver  
+    network_mode: host
   frontend:
     build: ./streamlit-chat
     container_name: streamlit
@@ -22,6 +23,7 @@ services:
       - .env
     volumes:
       - ./streamlit-chat:/app
+    network_mode: host
   # phoenix:
   #   image: arizephoenix/phoenix:latest # Must be greater than 4.0 version to work
   #   container_name: arize
@@ -33,6 +35,9 @@ services:
   #     - PHOENIX_WORKING_DIR=/mnt/data
   #   volumes:
   #     - phoenix_data:/mnt/data   # PHOENIX_WORKING_DIR
+
+
+
 
 volumes:
   phoenix_data:

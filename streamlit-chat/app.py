@@ -53,7 +53,7 @@ def get_available_guards():
         return ["UNKNOWN"]  # Return an empty list if there's an error
 
 
-def chat_with_model(model, message, hisory, guards_to_apply_str=None):
+def chat_with_model(model, message, history, guards_to_apply=[]):
     """
     Modified to automatically select backend based on model name.
     """
@@ -62,7 +62,7 @@ def chat_with_model(model, message, hisory, guards_to_apply_str=None):
     if not current_config:
         raise ValueError(f"No configuration found for model: {model}")
     GR_SERVER = os.environ.get("GR_SERVER", "http://localhost:8001/guarded_sync")
-    if guards_to_apply_str is None or guards_to_apply_str == "":
+    if guards_to_apply_str is None or len(guards_to_apply) == 0:
         # st.write("No guards to apply")
         response = completion(
             api_base=current_config["endpoint"],
@@ -81,7 +81,7 @@ def chat_with_model(model, message, hisory, guards_to_apply_str=None):
             max_tokens=50,
             extra_body={
                 "org_api_base": current_config["endpoint"],
-                "guards_to_apply": guards_to_apply_str,
+                "guards_to_apply": guards_to_apply,
             },
         )
     for chunk in response:
@@ -102,6 +102,7 @@ if available_guards:
     guards_to_apply = st.sidebar.multiselect("Choose Guards", available_guards)
     guards_to_apply_str = ",".join(guards_to_apply)
 else:
+    guards_to_apply = []
     guards_to_apply_str = None
 
 # Main Chat Area
@@ -131,7 +132,7 @@ if prompt := st.chat_input("Type your message here..."):
 
         # Get streaming response
         response = chat_with_model(
-            selected_model, prompt, st.session_state.messages, guards_to_apply_str
+            selected_model, prompt, st.session_state.messages, guards_to_apply
         )
 
         # Stream the response

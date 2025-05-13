@@ -30,5 +30,5 @@ class ChatCompletionsReqGuarded(ChatCompletionsReq):
     extra_body: Optional[dict] = None
     org_api_base: Optional[str]
     guards_to_apply: Optional[
-        Set[str]
+        List[str]
     ] = None  # Changed to support nested Guard objects
