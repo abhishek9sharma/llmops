@@ -1,10 +1,8 @@
-
 from fastapp import ServeModelFastAPI
-from ray.serve import ingress
 from ray import serve
-#from fastapi import Request 
+from ray.serve import ingress
+# from fastapi import Request
 from starlette.requests import Request
-
 
 # Initialize the model server
 grounded_ai_hal_judge = ServeModelFastAPI(
@@ -12,7 +10,7 @@ grounded_ai_hal_judge = ServeModelFastAPI(
     model_type="peft",
     task_type="text-generation",
     quantized=True,
-    peft_adapter_path="/mnt/g/PersonalProjects/hfmodels/Phi-3.5-mini-instruct"
+    peft_adapter_path="/mnt/g/PersonalProjects/hfmodels/Phi-3.5-mini-instruct",
 )
 
 
@@ -20,5 +18,6 @@ grounded_ai_hal_judge = ServeModelFastAPI(
 @ingress(grounded_ai_hal_judge.app)
 class GroundedAIHalJudgeRayServe:
     pass
+
 
 grounded_ai_hal_judge_ray_serve = GroundedAIHalJudgeRayServe.bind()

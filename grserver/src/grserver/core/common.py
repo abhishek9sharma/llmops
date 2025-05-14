@@ -11,7 +11,9 @@ from grserver.schemas.chat import ChatCompletionsReq, ChatCompletionsReqGuarded
 from grserver.telemetry.otel_setup import trace_calls
 
 
-def outcome_to_stream_response(validation_outcome: ValidationOutcome, ID, model):
+def outcome_to_stream_response(
+    token: str, ID, model, validation_outcome: ValidationOutcome = None
+):
     stream_chunk_template = {
         "id": f"chatcmpl-{ID}",  # Added ID field
         "object": "chat.completion.chunk",
@@ -20,19 +22,21 @@ def outcome_to_stream_response(validation_outcome: ValidationOutcome, ID, model)
         "choices": [
             {
                 "delta": {
-                    "content": validation_outcome.validated_output,
+                    "content": token,
                 },
             }
         ],
         "guardrails": {
-            "reask": validation_outcome.reask or None,
-            "validation_passed": validation_outcome.validation_passed,
-            "error": validation_outcome.error or None,
+            "reask": validation_outcome.reask if validation_outcome else None,
+            "validation_passed": validation_outcome.validation_passed
+            if validation_outcome
+            else None,
+            "error": validation_outcome.error if validation_outcome else None,
         },
     }
     # does this even make sense with a stream? wed need each chunk as theyre emitted
     stream_chunk = stream_chunk_template
-    stream_chunk["choices"][0]["delta"]["content"] = validation_outcome.validated_output
+    stream_chunk["choices"][0]["delta"]["content"] = token
     return stream_chunk
 
 
@@ -117,5 +121,5 @@ def get_guards(guards_to_apply=None):
         print("gL", gL)
         guard_x = gd.Guard(name="GG").use_many(*gL)
         print("guard_x", guard_x)
-        #gL.append(guard_x)
+        # gL.append(guard_x)
     return guard_x

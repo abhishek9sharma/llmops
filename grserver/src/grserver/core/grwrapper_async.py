@@ -17,6 +17,7 @@ async def acompletion_gg(payload_in: ChatCompletionsReq):
     api_key, api_base, model, guard = get_config(payload_in.guard_to_apply)
     open_ai_payload = convert_to_chat_completions_req(payload_in)
     open_ai_payload = open_ai_payload.model_dump()
+
     try:
         fragment_generator = await guard(
             litellm.acompletion,

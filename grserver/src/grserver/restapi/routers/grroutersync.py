@@ -27,9 +27,14 @@ def completion_gg(payload_in: ChatCompletionsReqGuarded, api_key: str):
 
     # open_ai_payload.model = "gpt-4o-mini" if open_ai_payload.model == "gpt-4" else open_ai_payload.model
     open_ai_payload = open_ai_payload.model_dump()
+    print("open_ai_payload", open_ai_payload)
+    try:
+        for msg in open_ai_payload["messages"]:
+            guards.validate(msg["content"])
+    except Exception as e:
+        error_str = "INPUT_GUARD_FAILED::" + str(e)
+        raise ValueError(error_str)
 
-    # try:
-    print(api_base, api_key)
     fragment_generator = guards(
         litellm.completion,
         api_base=api_base,
@@ -53,25 +58,29 @@ def chatcompletion(chat_req: ChatCompletionsReqGuarded, request: Request):
     def stream_responses():
         try:
             for result in completion_gg(chat_req, api_key):
-
-                chunk = json.dumps(
-                    outcome_to_stream_response(
-                        validation_outcome=result, ID=ID, model=chat_req.model
+                if result.validation_passed:
+                    chunk = json.dumps(
+                        outcome_to_stream_response(
+                            token=str(result.validated_output),
+                            ID=ID,
+                            model=chat_req.model,
+                            validation_outcome=result,
+                        )
                     )
-                )
-                ystr = f"data: {chunk}\n\n"
-                yield ystr
+                    ystr = f"data: {chunk}\n\n"
+                    yield ystr
+                else:
+                    raise ValueError(f"Validation failed during output")
                 # chunk_string = f"data: {json.dumps(outcome_to_stream_response(validation_outcome=result))}\n\n"
                 # yield chunk_string
         except Exception as e:
             print(e)
-            error_strs = (
-                "I cannot respond further as Guardrails has failed. Please try again."
-            )
+            error_strs = f"I cannot respond further as Guardrails has failed. Please try again error is: {str(e)}"
+
             for word in error_strs.split():
                 chunk = json.dumps(
                     outcome_to_stream_response(
-                        validation_outcome=word, ID=ID, model=chat_req.model
+                        token=word + " ", ID=ID, model=chat_req.model
                     )
                 )
                 ystr = f"data: {chunk}\n\n"
