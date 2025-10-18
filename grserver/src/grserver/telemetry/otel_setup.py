@@ -8,7 +8,7 @@ from phoenix.otel import register  # Phoenix OTEL register function
 # Register Phoenix OTEL
 tracer_provider = register(
     project_name="arizetest",
-    endpoint="http://arize:6006/v1/traces",
+    endpoint="http://localhost:6006/v1/traces",
     set_global_tracer_provider=False,
 )
 
@@ -62,9 +62,3 @@ def trace_async_generator(func):
                 yield item
 
     return wrapper
-
-
-# # Function to integrate FastAPI with OpenTelemetry
-# def configure_otel(app):
-#     """Configures FastAPI with OpenTelemetry instrumentation."""
-#     FastAPIInstrumentor.instrument_app(app)

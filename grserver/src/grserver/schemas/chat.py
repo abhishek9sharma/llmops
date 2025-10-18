@@ -20,7 +20,7 @@ class ChatCompletionsReqGuarded(BaseModel):
     messages: List[Message]
     max_tokens: Optional[int] = 100
     stream: Optional[bool] = True
-    guard_to_apply: Optional[str] = None
+    c: Optional[List[str]] = None
 
 
 # data = {

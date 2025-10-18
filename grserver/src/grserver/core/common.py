@@ -2,6 +2,7 @@ import os
 
 import guardrails as gd
 from guardrails import OnFailAction
+from guardrails.hub import ProfanityFree
 
 from grserver.core.guards import guard_map
 from grserver.schemas.chat import ChatCompletionsReq, ChatCompletionsReqGuarded
@@ -40,37 +41,18 @@ def convert_to_chat_completions_req(
 
 
 @trace_calls
-def get_config(guard_to_apply: str = None):
-    api_key = os.environ["OPEN_AI_KEY"]
-    api_base = "https://api.openai.com/v1"
-    model = "gpt-4o-mini"
-    if guard_to_apply is None:
-        guard_x = gd.AsyncGuard(name="Profanity").use(
-            ProfanityFree, on_fail=OnFailAction.NOOP
-        )
+def get_config(guards_to_apply: str = None):
+    if guards_to_apply is None or guards_to_apply == []:
+        # guard_x = gd.AsyncGuard(name="Profanity").use(
+        #     ProfanityFree, on_fail=OnFailAction.NOOP
+        # )
+        return None
     else:
-        guard_x = gd.AsyncGuard(name=guard_to_apply).use(
-            guard_map[guard_to_apply], on_fail=OnFailAction.EXCEPTION
-        )
+        rq_guards = [guard_map[g] for g in guards_to_apply]
+        guard_x = gd.AsyncGuard(name="G").use_many(*rq_guards)
         # print(guard_x)
-    return api_key, api_base, model, guard_x
-
-
-@trace_calls
-def get_config_sync(guard_to_apply: str = None):
-    api_key = os.environ["OPEN_AI_KEY"]
-    api_base = "https://api.openai.com/v1"
-    model = "gpt-4o-mini"
-    if guard_to_apply is None:
-        guard_x = gd.Guard(name="Profanity").use(
-            ProfanityFree, on_fail=OnFailAction.NOOP
-        )
-    else:
-        guard_x = gd.Guard(name=guard_to_apply).use(
-            guard_map[guard_to_apply], on_fail=OnFailAction.EXCEPTION
-        )
-        # print(guard_x)
-    return api_key, api_base, model, guard_x
+    print("GUARDS", guards_to_apply, rq_guards)
+    return guard_x
 
 
 def outcome_to_stream_response_err(error_str):

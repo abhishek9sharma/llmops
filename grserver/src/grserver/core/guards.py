@@ -1,8 +1,7 @@
-from guardrails.hub import BanList, LlamaGuard7B, ProfanityFree, ToxicLanguage
+from guardrails import OnFailAction
+from guardrails.hub import GuardrailsPII, ToxicLanguage
 
 guard_map = {
-    "Profanity": ProfanityFree,
-    "LlamaGuard7B": LlamaGuard7B(policies=[LlamaGuard7B.POLICY__NO_ILLEGAL_DRUGS]),
-    "BanList": BanList(banned_words=["codename", "athena"]),
-    "ToxicLanguage": ToxicLanguage,
+    "Toxic": ToxicLanguage(validation_method="sentence", threshold=0.5),
+    "PII": GuardrailsPII(entities=["PERSON", "LOCATION"], on_fail=OnFailAction.FIX),
 }

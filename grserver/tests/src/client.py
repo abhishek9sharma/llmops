@@ -25,11 +25,11 @@
 from grserver.schemas.chat import ChatCompletionsReq, ChatCompletionsReqGuarded
 
 xdict = {
-    "model": "gpt-4o-mini",
+    "model": "llama3.1:8b",
     "messages": [{"role": "user", "content": "How are you"}],
     "max_tokens": 100,
     "stream": True,
-    "guard_to_apply": "Profanity",
+    "guards_to_apply": "Profanity",
 }
 
 xobj = ChatCompletionsReqGuarded(**xdict)
