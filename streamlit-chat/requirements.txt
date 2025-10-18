@@ -1,4 +1,3 @@
 streamlit
 ollama
 openai
-guardrails-ai

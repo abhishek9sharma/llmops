@@ -5,7 +5,7 @@ import requests
 import streamlit as st
 from openai import OpenAI
 
-OLLAMA_ENDPOINT = "http://ollama-backend:11434"
+OLLAMA_ENDPOINT = "http://localhost:11434"
 FAST_API_BACKEND = "http://fastapi-backend:8001"
 VECTOR_API_BACKEND = "http://vector-backend:8000"
 
