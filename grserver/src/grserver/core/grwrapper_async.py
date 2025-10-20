@@ -6,12 +6,14 @@ import litellm
 import openai
 from openai import AsyncOpenAI
 
-from grserver.core.common import (convert_to_chat_completions_req, get_config,
-                                  outcome_to_stream_response,
-                                  outcome_to_stream_response_err)
+from grserver.core.common import (
+    convert_to_chat_completions_req,
+    get_config,
+    outcome_to_stream_response,
+    outcome_to_stream_response_err,
+)
 from grserver.schemas.chat import ChatCompletionsReq
-from grserver.telemetry.otel_setup import (trace_async_generator,
-                                           trace_calls_async)
+from grserver.telemetry.otel_setup import trace_async_generator, trace_calls_async
 
 # fragment_generator = await guard(
 #     #litellm.acompletion,
@@ -40,63 +42,50 @@ async def acompletion_gg(payload_in: ChatCompletionsReq, api_key, api_base, guar
                 except Exception as e:
                     print("Input_validation_failed")
                     raise ValueError("INPUT_VAL_FAILED\n" + str(e))
-
-        # Define streaming callable
-        # FIXME
-        async def openai_streaming_callable(**kwargs):
-            kwargs["stream"] = True
-            stream = await client.chat.completions.create(**kwargs)
-
-            async for chunk in stream:
-                if chunk.choices and chunk.choices[0].delta.content:
-                    # Extract and print the content from the current chunk
-                    content = chunk.choices[0].delta.content
-                    yield content
-
-        # Define non-streaming callable
-        async def openai_callable(**kwargs):
-            kwargs["stream"] = False
-            response = await client.chat.completions.create(**kwargs)
-            return response.choices[0].message.content
-
         try:
-            # Choose callable based on streaming preference
-            callable_func = (
-                openai_streaming_callable if payload_in.stream else openai_callable
-            )
-
-            if guard:
-                # Use guardrails validation
+            print(f"api_base :{api_base} guards :{guard}")
+            if 1:
+                fragment_generator = await guard(
+                    litellm.acompletion,
+                    custom_llm_provider="openai",
+                    llm_callable="openai",
+                    api_base=api_base,
+                    api_key=api_key,
+                    **open_ai_payload,
+                )
                 if payload_in.stream:
-                    print("HXH")
-                    if api_key == "ollama":
-                        open_ai_payload["model"] = f"openai/{payload_in.model}"
-                    fragment_generator = await guard(
-                        litellm.acompletion,
-                        llm_callable="openai",
-                        api_base=api_base,
-                        api_key=api_key,
-                        **open_ai_payload,
-                    )
+
                     async for result in fragment_generator:
                         chunk_string = f"data: {json.dumps(outcome_to_stream_response(validation_outcome=result))}\n\n"
-                        print(result)
+                        # print(result)
                         yield chunk_string
                 else:
-                    fragment_generator = await guard(
-                        callable_func,
-                        **open_ai_payload,
-                    )
                     yield fragment_generator.validated_output
-            else:
-                # Direct OpenAI call without guardrails
-                if payload_in.stream:
-                    async for chunk in callable_func(**open_ai_payload):
-                        chunk_string = f"data: {json.dumps(outcome_to_stream_response(content=chunk))}\n\n"
-                        yield chunk_string
-                else:
-                    result = await callable_func(**open_ai_payload)
-                    yield result
+            # else:
+            #     fragment_generator = await litellm.acompletion(
+            #         custom_llm_provider="openai",
+            #         llm_callable="openai",
+            #         api_base=api_base,
+            #         api_key=api_key,
+            #         **open_ai_payload,
+            #     )
+            #     if payload_in.stream:
+            #         async for result in fragment_generator:
+            #             if hasattr(result, 'choices') and len(result.choices) > 0:
+            #                 choice = result.choices[0]
+            #                 if hasattr(choice, 'delta') and hasattr(choice.delta, 'content'):
+            #                     content = choice.delta.content
+            #                     if content:  # Only yield non-empty content
+            #                         yield {"choices": [{"delta": {"content": content}}]}
+            #                 elif hasattr(choice, 'text'):
+            #                     text = choice.text
+            #                     if text:  # Only yield non-empty text
+            #                         yield {"choices": [{"delta": {"content": text}}]}
+            #             else:
+            #                 # Fallback: wrap the result in the expected format
+            #                 yield {"choices": [{"delta": {"content": str(result)}}]}
+            #     else:
+            #         yield fragment_generator
 
         except Exception as e:
             print("output_validation_failed")

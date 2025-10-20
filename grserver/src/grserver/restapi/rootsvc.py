@@ -9,4 +9,4 @@ def start_svc():
     return {"Info": "GR Service is running"}
 
 
-app.include_router(grrouterasync.router, prefix="/grserver_async")
+app.include_router(grrouterasync.router, prefix="/guarded")

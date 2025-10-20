@@ -15,8 +15,8 @@ PYTHON_FILES := $(shell find . -name "*.py")
 PYTHON_VERSION := 3.9
 format:
 	@echo "Formatting Python code..."
-	pip3 install black
-	pip3 install isort
+	python -m pip install black
+	pythn -m pip install isort
 	black .
 	isort .
 #   black .  && autopep8 --in-place --recursive . && flake8 src tests"

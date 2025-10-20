@@ -1,5 +1,6 @@
 uv
-guardrails-ai==0.6.7
+guardrails-ai==0.6.3
+transformers==4.38.2
 fastapi
 uvicorn==0.34.0
 openinference-instrumentation==0.1.20

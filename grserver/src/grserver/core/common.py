@@ -2,7 +2,6 @@ import os
 
 import guardrails as gd
 from guardrails import OnFailAction
-from guardrails.hub import ProfanityFree
 
 from grserver.core.guards import guard_map
 from grserver.schemas.chat import ChatCompletionsReq, ChatCompletionsReqGuarded
@@ -46,11 +45,11 @@ def get_config(guards_to_apply: str = None):
         # guard_x = gd.AsyncGuard(name="Profanity").use(
         #     ProfanityFree, on_fail=OnFailAction.NOOP
         # )
-        return None
+        rq_guards = []
     else:
         rq_guards = [guard_map[g] for g in guards_to_apply]
-        guard_x = gd.AsyncGuard(name="G").use_many(*rq_guards)
-        # print(guard_x)
+    guard_x = gd.AsyncGuard(name="G").use_many(*rq_guards)
+    # print(guard_x)
     print("GUARDS", guards_to_apply, rq_guards)
     return guard_x
 

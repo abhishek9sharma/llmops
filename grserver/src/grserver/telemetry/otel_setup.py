@@ -2,13 +2,14 @@ from functools import wraps
 
 from openinference.semconv.trace import SpanAttributes
 from opentelemetry import trace
+
 # from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from phoenix.otel import register  # Phoenix OTEL register function
 
 # Register Phoenix OTEL
 tracer_provider = register(
     project_name="arizetest",
-    endpoint="http://localhost:6006/v1/traces",
+    endpoint="http://arize:6006/v1/traces",
     set_global_tracer_provider=False,
 )
 

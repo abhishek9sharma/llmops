@@ -17,18 +17,18 @@ services:
   #   volumes:
   #     - ./streamlit-chat:/app
 
-  # grserver:
-  #   build: 
-  #     context : ./grserver
-  #     args:
-  #       - GR_TOKEN=$GR_TOKEN
-  #   container_name: llmops_grserver
-  #   env_file:
-  #     - .env
-  #   ports:
-  #     - "8001:8001"
-  #   volumes:
-  #     - ./grserver:/grserver
+  grserver:
+    build: 
+      context : ./grserver
+      args:
+        - GR_TOKEN=$GR_TOKEN
+    container_name: guardrails-service
+    env_file:
+      - .env
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./grserver:/grserver
 
   phoenix:
     image: arizephoenix/phoenix:latest # Must be greater than 4.0 version to work
