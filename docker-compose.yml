@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  llm-ollama-backend:
+    build: ./ollama-backend
+    container_name: ollama-service
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+  
+  frontend-chatbot:
+    build: ./streamlit-chat
+    depends_on:
+      llm-ollama-backend:
+          condition: service_started
+      grserver:
+        condition: service_started
+    container_name: streamlit
+    ports:
+      - "8501:8501"
+  #   volumes:
+  #     - ./streamlit-chat:/app
+
+  grserver:
+    build: 
+      context : ./grserver
+      args:
+        - GR_TOKEN=$GR_TOKEN
+    container_name: guardrails-service
+    depends_on:
+      phoenix:
+          condition: service_started
+      llm-ollama-backend:
+        condition: service_started
+    env_file:
+      - .env
+    ports:
+      - "8001:8001"
+    volumes:
+      - ./grserver:/grserver
+
+  phoenix:
+    image: arizephoenix/phoenix:latest # Must be greater than 4.0 version to work
+    container_name: arize
+    ports:
+      - 6006:6006  # PHOENIX_PORT
+      - 4317:4317  # PHOENIX_GRPC_PORT
+      - 9090:9090  # [Optional] PROMETHEUS PORT IF ENABLED
+    environment:
+      - PHOENIX_WORKING_DIR=/mnt/data
+    volumes:
+      - phoenix_data:/mnt/data   # PHOENIX_WORKING_DIR
+
+volumes:
+  phoenix_data:
+    driver: local
+  ollama:
+    driver: local
