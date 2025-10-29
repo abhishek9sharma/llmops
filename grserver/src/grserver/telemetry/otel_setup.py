@@ -17,6 +17,10 @@ tracer_provider = register(
 tracer = tracer_provider.get_tracer("my_custom_tracer")
 
 
+from openinference.instrumentation.guardrails import GuardrailsInstrumentor
+
+GuardrailsInstrumentor().instrument(tracer_provider=tracer_provider)
+
 # Helper decorator for tracing method calls
 def trace_calls(func):
     @wraps(func)

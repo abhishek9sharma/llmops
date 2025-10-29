@@ -1,7 +1,6 @@
 #!/bin/bash
 ollama serve & serve=$!
-sleep 30
-export MODEL_NAME=llama3.1:8b
+export MODEL_NAME=llama3.2:1b
 echo "Installing ${MODEL_NAME}"
-ollama run ${MODEL_NAME} & llama3.1:8b=$!
-wait $serve $llama3
+ollama run ${MODEL_NAME} & model_pid=$!
+wait $serve_pid $model_pid

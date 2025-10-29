@@ -18,7 +18,7 @@ RUN  python -m uv pip install --upgrade cryptography  pyopenssl==22.1.0
 #RUN python -m nltk.downloader -d /opt/nltk_data punkt
 
 EXPOSE 8001
-RUN guardrails configure --disable-metrics --enable-remote-inferencing --token ${GR_TOKEN}
+RUN guardrails configure --disable-metrics --disable-remote-inferencing --token ${GR_TOKEN}
 #RUN guardrails hub install hub://guardrails/llamaguard_7b
 #RUN guardrails hub install hub://guardrails/guardrails_pii|true
 RUN guardrails hub install hub://guardrails/toxic_language

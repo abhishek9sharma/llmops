@@ -11,6 +11,11 @@ services:
   
   frontend-chatbot:
     build: ./streamlit-chat
+    depends_on:
+      llm-ollama-backend:
+          condition: service_started
+      grserver:
+        condition: service_started
     container_name: streamlit
     ports:
       - "8501:8501"
@@ -23,6 +28,11 @@ services:
       args:
         - GR_TOKEN=$GR_TOKEN
     container_name: guardrails-service
+    depends_on:
+      phoenix:
+          condition: service_started
+      llm-ollama-backend:
+        condition: service_started
     env_file:
       - .env
     ports:
@@ -46,4 +56,4 @@ volumes:
   phoenix_data:
     driver: local
   ollama:
-  
+    driver: local

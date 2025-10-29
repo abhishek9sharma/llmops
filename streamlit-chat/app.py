@@ -5,6 +5,7 @@ import openai
 import requests
 import streamlit as st
 import logging
+
 logging.basicConfig(level=logging.INFO)
 # Initialize session state
 if "messages" not in st.session_state:
@@ -23,7 +24,6 @@ def send_chat_request(
 ) -> Optional[str]:
     """Send chat request to the API with optional guards"""
 
-
     GR_URL = "http://guardrails-service:8001/guarded/v1"
     try:
         client = openai.OpenAI(
@@ -33,16 +33,18 @@ def send_chat_request(
         custom_headers = {
             "apibase": endpoint,
         }
-        if len(selected_guards)>0:
-            custom_headers["guards"]= ",".join(selected_guards)
-        
-        logging.info(f"SENDING request to {GR_URL} with custom headers {custom_headers}")
+        if len(selected_guards) > 0:
+            custom_headers["guards"] = ",".join(selected_guards)
+
+        logging.info(
+            f"SENDING request to {GR_URL} with custom headers {custom_headers}"
+        )
         response_stream = client.chat.completions.create(
             model=model_name,
             messages=[{"role": m["role"], "content": m["content"]} for m in messages],
             timeout=120,
             stream=True,
-            extra_headers=custom_headers
+            extra_headers=custom_headers,
         )
         # st.write(response_stream)
         return response_stream
@@ -56,7 +58,6 @@ def send_chat_request(
 
 # App layout
 st.title("🤖 AI Chat Assistant with Guardrails Functionality")
-st.markdown("Chat with an OpenAI-compliant API endpoint")
 
 # Sidebar for configuration
 with st.sidebar:
@@ -102,7 +103,7 @@ with st.sidebar:
         st.rerun()
 
 # Main chat interface
-st.header("Chat")
+#st.header("Chat")
 
 # Display chat messages
 for message in st.session_state.messages:

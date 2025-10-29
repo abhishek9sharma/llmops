@@ -21,6 +21,7 @@ async def streamer(chat_req: ChatCompletionsReq, api_key, api_base, guards):
                 yield str(result) + "\n"
         else:
             collected = []
+            
             async for result in acompletion_gg(chat_req, api_key, api_base, guards):
                 collected.append(str(result) + "\n")
             # yield "HERE\n"

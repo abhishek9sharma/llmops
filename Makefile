@@ -31,6 +31,7 @@ format:
 
 up_with_build:
 	docker-compose up -d --build 
+	sleep 30
 
 up_with_build-dev:
 	docker-compose build --build-arg TARGET=dev
@@ -44,6 +45,7 @@ build-dev:
 
 up:
 	docker-compose up -d
+	sleep 30
 
 down:
 	docker-compose down

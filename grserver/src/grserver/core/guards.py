@@ -3,5 +3,5 @@ from guardrails.hub import GuardrailsPII, ToxicLanguage
 
 guard_map = {
     "Toxic": ToxicLanguage(validation_method="sentence", threshold=0.5),
-    "PII": GuardrailsPII(entities=["PERSON", "LOCATION"], on_fail=OnFailAction.FIX),
+    "PII": GuardrailsPII(entities=["PERSON"], on_fail=OnFailAction.FIX),
 }

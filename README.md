@@ -56,5 +56,6 @@ A simple llmops setup with:
    ```bash
    make up_with_build
    ```
+   This will take a while do build.
 
 6. Navigate to [http://localhost:8501/](http://localhost:8501/)
