@@ -7,6 +7,16 @@ A simple llmops setup with:
 - Ollama LLM backend
 - Arize logging enabled
 
+## Flow
+
+- Guardrails Disabled
+
+   <img src='./images/Guardrails_Disabled.pnga.jpg' width=60%>
+
+- Guadrails Enabled
+
+  <img src='./images/Guardrails_Enabled.pnga.jpg' width=60%>
+
 ## Prerequisites
 
 - Install Docker from [here](https://docs.docker.com/get-docker/)
