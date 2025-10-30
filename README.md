@@ -11,11 +11,11 @@ A simple llmops setup with:
 
 - Guardrails Disabled
 
-   <img src='./images/Guardrails_Disabled.pnga.jpg' width=60%>
+   <img src='images/Guardrails_Disabled.png' width=60%>
 
 - Guadrails Enabled
 
-  <img src='./images/Guardrails_Enabled.pnga.jpg' width=60%>
+  <img src='images/Guardrails_Enabled.png' width=60%>
 
 ## Prerequisites
 
