@@ -11,13 +11,14 @@ from grserver.core.common import (
     get_config,
     outcome_to_stream_response,
     outcome_to_stream_response_err,
+    get_guardrail_error_details
 )
 from grserver.schemas.chat import ChatCompletionsReq
-from grserver.telemetry.otel_setup import trace_async_generator, trace_calls_async
+#from grserver.telemetry.otel_setup import trace_async_generator, trace_calls_async
 
 
 
-@trace_async_generator
+
 async def acompletion_gg(payload_in: ChatCompletionsReq, api_key, api_base, guards):
     guard = get_config(guards)
     open_ai_payload = convert_to_chat_completions_req(payload_in)
@@ -28,14 +29,17 @@ async def acompletion_gg(payload_in: ChatCompletionsReq, api_key, api_base, guar
     try:
         # Validate input messages if guard is present
         if guard is not None:
+            pass
             for msg in input_msgs:
                 try:
                     await guard.validate(msg.content)
+                    #pass
                 except Exception as e:
+                    #raise e
                     print("Input_validation_failed")
                     raise ValueError("INPUT_VAL_FAILED\n" + str(e))
         try:
-            print(f"api_base :{api_base} guards :{guard}")
+            #print(f"api_base :{api_base} guards :{guard}")
             if 1:
                 fragment_generator = await guard(
                     litellm.acompletion,
@@ -58,17 +62,21 @@ async def acompletion_gg(payload_in: ChatCompletionsReq, api_key, api_base, guar
             raise ValueError("OUTPUT_VAL_FAILED\n" + str(e))
 
     except Exception as e:
-        print(e)
         if isinstance(e, guardrails.errors.ValidationError):
+            #print(guard.history.last)
             error_str = str(e)
         else:
             if "INPUT_VAL_FAILED" in str(e):
-                error_str = " I am sorry I cannot responsd further as I found that your input violates on of of our content guardrails"
+                error_str = get_guardrail_error_details(guard.history, "input")
+                #error_str + = " "
             else:
-                error_str = str(e)
+                #error_str = str(e)
+                error_str = get_guardrail_error_details(guard.history, "output")
 
-        for word in error_str.split():
-            w = word+" "
-            yield f"data: {json.dumps(outcome_to_stream_response_err(w))}\n\n"
+        if payload_in.stream:
+            for word in error_str.split():
+                w = word+" "
+                yield f"data: {json.dumps(outcome_to_stream_response_err(w))}\n\n"
 
-        yield f"error: {str(e)}\n\n"
+        else:
+            yield f"error: {str(error_str)}\n\n"

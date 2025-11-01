@@ -5,7 +5,7 @@ from guardrails import OnFailAction
 
 from grserver.core.guards import guard_map
 from grserver.schemas.chat import ChatCompletionsReq, ChatCompletionsReqGuarded
-from grserver.telemetry.otel_setup import trace_calls
+from grserver.telemetry.otel_setup import  trace_error
 
 
 def outcome_to_stream_response(validation_outcome):
@@ -39,7 +39,7 @@ def convert_to_chat_completions_req(
     )
 
 
-@trace_calls
+
 def get_config(guards_to_apply: str = None):
     if guards_to_apply is None or guards_to_apply == []:
         # guard_x = gd.AsyncGuard(name="Profanity").use(
@@ -70,3 +70,45 @@ def outcome_to_stream_response_err(error_str):
     stream_chunk = stream_chunk_template
     stream_chunk["choices"][0]["delta"]["content"] = error_str
     return stream_chunk
+
+
+@trace_error
+def get_guardrail_violation_message(failed_at: str, guard_failed: str = "UNKNOWN", failed_content = "UNKNOWN") -> str:
+    """Generate a guardrail violation message.
+    
+    Args:
+        failed_at: The point where the guardrail violation occurred
+        guard_failed: Specific guardrail that failed (optional)
+    
+    Returns:
+        Formatted violation message
+    """
+    if guard_failed is None:
+        return f"I am sorry I cannot respond further as I found that {failed_at} violates one of our content guardrails"
+    else:
+        return f"I am sorry I cannot respond further as I found that {failed_at} violates one of our content guardrails: {guard_failed}"
+
+
+
+def get_guardrail_error_details(hist, failed_at):
+    """Extract guardrail error message from validation logs."""
+
+    if hist.last.failed_validations.last.validation_result.validated_chunk:
+        failed_content = hist.last.failed_validations.last.validation_result.validated_chunk
+    else:
+        failed_content = "unknown"
+    
+    if hist.last.failed_validations.validator_name:
+        guard_failed = hist.last.failed_validations.last.validator_name
+    else:
+        guard_failed = "unknown"
+
+
+    # for v in hist.last.validator_logs:
+    #     if v.validation_result.outcome == "fail" \
+    #         and v.value_after_validation is None:#=="":
+    #             guard_failed = v.validator_name
+    #             failed_content = v.value_before_validation
+    #             break
+    
+    return get_guardrail_violation_message(failed_at, guard_failed, failed_content)

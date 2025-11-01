@@ -17,53 +17,69 @@ tracer_provider = register(
 tracer = tracer_provider.get_tracer("my_custom_tracer")
 
 
-from openinference.instrumentation.guardrails import GuardrailsInstrumentor
-
-GuardrailsInstrumentor().instrument(tracer_provider=tracer_provider)
 
 # Helper decorator for tracing method calls
-def trace_calls(func):
+# def trace_calls(func):
+#     @wraps(func)
+#     def wrapper(*args, **kwargs):
+#         with tracer.start_as_current_span(func.__name__) as guard_span:
+#             guard_span.set_attribute(
+#                 SpanAttributes.OPENINFERENCE_SPAN_KIND, "GUARDRAIL"
+#             )
+#             guard_span.set_attribute("args", str(args))
+#             guard_span.set_attribute("kwargs", str(kwargs))
+#             print(f"Tracing {func.__name__} with args: {args} and kwargs: {kwargs}")
+#             return func(*args, **kwargs)
+
+#     return wrapper
+
+
+# Helper decorator for tracing method calls
+def trace_error(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         with tracer.start_as_current_span(func.__name__) as guard_span:
             guard_span.set_attribute(
                 SpanAttributes.OPENINFERENCE_SPAN_KIND, "GUARDRAIL"
             )
-            guard_span.set_attribute("args", str(args))
-            guard_span.set_attribute("kwargs", str(kwargs))
-            print(f"Tracing {func.__name__} with args: {args} and kwargs: {kwargs}")
+            #guard_span.set_attribute("args", str(args))
+            #guard_span.set_attribute("kwargs", str(kwargs))
+            guard_span.set_attribute("failed_location", args[0])
+            guard_span.set_attribute("failed_guard", args[1])
+            guard_span.set_attribute("failed_content", args[2])
+          
+            print(f"Tracing {func.__name__}" )
             return func(*args, **kwargs)
 
     return wrapper
 
+# def trace_calls_async(func):
+#     @wraps(func)
+#     async def wrapper(*args, **kwargs):
+#         with tracer.start_as_current_span(func.__name__) as guard_span:
+#             guard_span.set_attribute(
+#                 SpanAttributes.OPENINFERENCE_SPAN_KIND, "GUARDRAIL"
+#             )
+#             guard_span.set_attribute("args", str(args))
+#             guard_span.set_attribute("kwargs", str(kwargs))
+#             print(f"Tracing {func.__name__} with args: {args} and kwargs: {kwargs}")
+#             return await func(*args, **kwargs)
 
-def trace_calls_async(func):
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        with tracer.start_as_current_span(func.__name__) as guard_span:
-            guard_span.set_attribute(
-                SpanAttributes.OPENINFERENCE_SPAN_KIND, "GUARDRAIL"
-            )
-            guard_span.set_attribute("args", str(args))
-            guard_span.set_attribute("kwargs", str(kwargs))
-            print(f"Tracing {func.__name__} with args: {args} and kwargs: {kwargs}")
-            return await func(*args, **kwargs)
-
-    return wrapper
+#     return wrapper
 
 
-def trace_async_generator(func):
-    @wraps(func)
-    async def wrapper(*args, **kwargs):
-        with tracer.start_as_current_span(func.__name__) as guard_span:
-            guard_span.set_attribute(
-                SpanAttributes.OPENINFERENCE_SPAN_KIND, "GUARDRAIL"
-            )
-            guard_span.set_attribute("args", str(args))
-            guard_span.set_attribute("kwargs", str(kwargs))
-            print(f"Tracing {func.__name__} with args: {args} and kwargs: {kwargs}")
+# def trace_async_generator(func):
+#     @wraps(func)
+#     async def wrapper(*args, **kwargs):
+#         with tracer.start_as_current_span(func.__name__) as guard_span:
+#             guard_span.set_attribute(
+#                 SpanAttributes.OPENINFERENCE_SPAN_KIND, "GUARDRAIL"
+#             )
+#             guard_span.set_attribute("args", str(args))
+#             guard_span.set_attribute("kwargs", str(kwargs))
+#             print(f"Tracing {func.__name__} with args: {args} and kwargs: {kwargs}")
 
-            async for item in func(*args, **kwargs):
-                yield item
+#             async for item in func(*args, **kwargs):
+#                 yield item
 
-    return wrapper
+#     return wrapper

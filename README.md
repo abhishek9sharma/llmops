@@ -1,21 +1,22 @@
 # llmops
 
-A simple llmops setup with:
+A simple llmops
 
-- Chat front end
-- Guardrails middleware  
-- Ollama LLM backend
-- Arize logging enabled
+- Components
+   - Chat front end
+   - Guardrails middleware  
+   - Ollama LLM backend
+   - Arize logging enabled
 
-## Flow
+- Flow
 
-- Guardrails Disabled
+   - Guardrails Disabled
 
-   <img src='images/Guardrails_Disabled.png' width=60%>
+      <img src='images/Guardrails_Disabled.png' width=60%>
 
-- Guadrails Enabled
+   - Guardrails Enabled
 
-  <img src='images/Guardrails_Enabled.png' width=60%>
+      <img src='images/Guardrails_Enabled.png' width=60%>
 
 ## Prerequisites
 
