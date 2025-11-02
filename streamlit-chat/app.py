@@ -1,10 +1,10 @@
 import json
+import logging
 from typing import Dict, List, Optional
 
 import openai
 import requests
 import streamlit as st
-import logging
 
 logging.basicConfig(level=logging.INFO)
 # Initialize session state
@@ -23,8 +23,12 @@ def send_chat_request(
     selected_guards: List[str],
 ) -> Optional[str]:
     """Send chat request to the API with optional guards"""
+    if st.session_state.get("api_mode") == "localhost":
+        GR_URL = "http://localhost:8001/guarded/v1"
+    else:
+        GR_URL = "http://guardrails-service:8001/guarded/v1"
 
-    GR_URL = "http://guardrails-service:8001/guarded/v1"
+    # GR_URL = "http://guardrails-service:8001/guarded/v1"
     try:
         client = openai.OpenAI(
             api_key=st.session_state.api_key,
@@ -66,9 +70,13 @@ with st.sidebar:
     # Configuration section
     st.sidebar.header("API Configuration")
 
-    endpoint = st.sidebar.text_input(
+    endpoint = st.sidebar.selectbox(
         "API Endpoint",
-        value="http://ollama-service:11434/v1/",
+        [
+            "http://ollama-service:11434/v1/",
+            "https://api.deepseek.com",
+            "https://api.openai.com/v1",
+        ],
         help="The API endpoint for the chat completions",
     )
 
@@ -76,8 +84,17 @@ with st.sidebar:
         "API Key", value="ollama", type="password", help="API key for authentication"
     )
 
-    model_name = st.sidebar.text_input(
-        "Model Name", value="llama3.1:8b", help="The model to use for chat completions"
+    model_name = st.sidebar.selectbox(
+        "Model Name",
+        ["llama3.1:8b", "deepseek-chat", "gpt-3.5-turbo"],
+        help="The model to use for chat completions",
+    )
+
+    st.sidebar.selectbox(
+        "API Mode",
+        ["Docker", "localhost"],
+        key="api_mode",
+        help="Select between production and localhost API endpoints",
     )
 
     st.session_state.api_key = api_key
@@ -103,7 +120,7 @@ with st.sidebar:
         st.rerun()
 
 # Main chat interface
-#st.header("Chat")
+# st.header("Chat")
 
 # Display chat messages
 for message in st.session_state.messages:

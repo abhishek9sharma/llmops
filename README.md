@@ -16,8 +16,15 @@ A simple llmops
 
    - Guardrails Enabled
 
-      <img src='images/Guardrails_Enabled.png' width=60%>
+      <img src='images/demo.mov' width=60%>
+   
+   - Demo
 
+      <!-- <video width="60%" controls>
+        <source src="images/demo.mov" type="video/quicktime">
+        Your browser does not support the video tag.
+      </video> -->
+   
 ## Prerequisites
 
 - Install Docker from [here](https://docs.docker.com/get-docker/)
