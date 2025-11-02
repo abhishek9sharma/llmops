@@ -11,8 +11,8 @@ A simple llmops
 - Demo
    
    <video width="60%" controls>
-        <source src="https://github.com/user-attachments/assets/facac68e-a6a5-44d5-8e19-6cdedc3b487a">
-      </video>
+      <source src="https://github.com/user-attachments/assets/facac68e-a6a5-44d5-8e19-6cdedc3b487a">
+   </video>
    
 
 - Flow
