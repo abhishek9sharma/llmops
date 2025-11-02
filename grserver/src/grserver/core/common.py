@@ -93,14 +93,20 @@ def get_guardrail_violation_message(failed_at: str, guard_failed: str = "UNKNOWN
 def get_guardrail_error_details(hist, failed_at):
     """Extract guardrail error message from validation logs."""
 
-    if hist.last.failed_validations.last.validation_result.validated_chunk:
-        failed_content = hist.last.failed_validations.last.validation_result.validated_chunk
-    else:
+    try:
+        if hist.last.failed_validations.last.validation_result.validated_chunk:
+            failed_content = hist.last.failed_validations.last.validation_result.validated_chunk
+        else:
+            failed_content = hist.last.failed_validations.value_before_validation
+    except:
         failed_content = "unknown"
-    
-    if hist.last.failed_validations.validator_name:
-        guard_failed = hist.last.failed_validations.last.validator_name
-    else:
+
+    try:
+        if hist.last.failed_validations.validator_name:
+            guard_failed = hist.last.failed_validations.last.validator_name
+        else:
+            guard_failed = "unknown"
+    except Exception as e:
         guard_failed = "unknown"
 
 
