@@ -26,6 +26,7 @@ A simple llmops
       <img src='images/Guardrails_Disabled.png' width=60%>
 
    - Guardrails Enabled
+   
        <img src='images/Guardrails_Enabled.png' width=60%>
 
 
