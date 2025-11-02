@@ -8,6 +8,9 @@ A simple llmops
    - Ollama LLM backend
    - Arize logging enabled
 
+- Demo
+   - https://github.com/user-attachments/assets/facac68e-a6a5-44d5-8e19-6cdedc3b487a
+
 - Flow
 
    - Guardrails Disabled
@@ -17,6 +20,9 @@ A simple llmops
    - Guardrails Enabled
 
       <img src='images/Guardrails_Enabled.png' width=60%>
+
+  
+
 
 ## Prerequisites
 
