@@ -2,7 +2,6 @@ from functools import wraps
 
 from openinference.semconv.trace import SpanAttributes
 from opentelemetry import trace
-
 # from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
 from phoenix.otel import register  # Phoenix OTEL register function
 
@@ -16,6 +15,7 @@ tracer_provider = register(
 # Get tracer
 tracer = tracer_provider.get_tracer("my_custom_tracer")
 
+
 # Helper decorator for tracing method calls
 def trace_error(func):
     @wraps(func)
@@ -24,14 +24,13 @@ def trace_error(func):
             guard_span.set_attribute(
                 SpanAttributes.OPENINFERENCE_SPAN_KIND, "GUARDRAIL"
             )
-            #guard_span.set_attribute("args", str(args))
-            #guard_span.set_attribute("kwargs", str(kwargs))
+            # guard_span.set_attribute("args", str(args))
+            # guard_span.set_attribute("kwargs", str(kwargs))
             guard_span.set_attribute("failed_location", args[0])
             guard_span.set_attribute("failed_guard", args[1])
             guard_span.set_attribute("failed_content", args[2])
-          
-            print(f"Tracing {func.__name__}" )
+
+            print(f"Tracing {func.__name__}")
             return func(*args, **kwargs)
 
     return wrapper
-

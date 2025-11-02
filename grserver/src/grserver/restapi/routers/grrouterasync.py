@@ -8,10 +8,10 @@ from starlette.responses import StreamingResponse
 from grserver.core.common import outcome_to_stream_response_err
 from grserver.core.grwrapper_async import acompletion_gg
 from grserver.schemas.chat import ChatCompletionsReq
-#from grserver.telemetry.otel_setup import trace_async_generator, trace_calls_async
+
+# from grserver.telemetry.otel_setup import trace_async_generator, trace_calls_async
 
 router = APIRouter()
-
 
 
 async def streamer(chat_req: ChatCompletionsReq, api_key, api_base, guards):
@@ -21,7 +21,7 @@ async def streamer(chat_req: ChatCompletionsReq, api_key, api_base, guards):
                 yield str(result) + "\n"
         else:
             collected = []
-            
+
             async for result in acompletion_gg(chat_req, api_key, api_base, guards):
                 collected.append(str(result) + "\n")
             # yield "HERE\n"

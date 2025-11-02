@@ -5,7 +5,7 @@ from guardrails import OnFailAction
 
 from grserver.core.guards import guard_map
 from grserver.schemas.chat import ChatCompletionsReq, ChatCompletionsReqGuarded
-from grserver.telemetry.otel_setup import  trace_error
+from grserver.telemetry.otel_setup import trace_error
 
 
 def outcome_to_stream_response(validation_outcome):
@@ -37,7 +37,6 @@ def convert_to_chat_completions_req(
         max_tokens=guarded_req.max_tokens,
         stream=guarded_req.stream,
     )
-
 
 
 def get_config(guards_to_apply: str = None):
@@ -73,13 +72,15 @@ def outcome_to_stream_response_err(error_str):
 
 
 @trace_error
-def get_guardrail_violation_message(failed_at: str, guard_failed: str = "UNKNOWN", failed_content = "UNKNOWN") -> str:
+def get_guardrail_violation_message(
+    failed_at: str, guard_failed: str = "UNKNOWN", failed_content="UNKNOWN"
+) -> str:
     """Generate a guardrail violation message.
-    
+
     Args:
         failed_at: The point where the guardrail violation occurred
         guard_failed: Specific guardrail that failed (optional)
-    
+
     Returns:
         Formatted violation message
     """
@@ -89,26 +90,26 @@ def get_guardrail_violation_message(failed_at: str, guard_failed: str = "UNKNOWN
         return f"I am sorry I cannot respond further as I found that {failed_at} violates one of our content guardrails: {guard_failed}"
 
 
-
 def get_guardrail_error_details(hist, failed_at):
     """Extract guardrail error message from validation logs."""
 
     try:
         if hist.last.failed_validations.last.validation_result.validated_chunk:
-            failed_content = hist.last.failed_validations.last.validation_result.validated_chunk
+            failed_content = (
+                hist.last.failed_validations.last.validation_result.validated_chunk
+            )
         else:
-            failed_content = hist.last.failed_validations.value_before_validation
+            failed_content = hist.last.failed_validations.last.value_before_validation
     except:
         failed_content = "unknown"
 
     try:
-        if hist.last.failed_validations.validator_name:
+        if hist.last.failed_validations.last.validator_name:
             guard_failed = hist.last.failed_validations.last.validator_name
         else:
             guard_failed = "unknown"
     except Exception as e:
-        guard_failed = "unknown"
-
+        guard_failed = "UNK"
 
     # for v in hist.last.validator_logs:
     #     if v.validation_result.outcome == "fail" \
@@ -116,5 +117,5 @@ def get_guardrail_error_details(hist, failed_at):
     #             guard_failed = v.validator_name
     #             failed_content = v.value_before_validation
     #             break
-    
+
     return get_guardrail_violation_message(failed_at, guard_failed, failed_content)
