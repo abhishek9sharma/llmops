@@ -1,11 +1,35 @@
 # llmops
 
-A simple llmops setup with:
+A simple llmops
 
-- Chat front end
-- Guardrails middleware  
-- Ollama LLM backend
-- Arize logging enabled
+- Components
+   - Chat front end
+   - Guardrails middleware  
+   - Ollama LLM backend
+   - Custom Arize Logging
+
+- Demo
+   
+   [![gr](images/demo.jpg)](https://github.com/user-attachments/assets/facac68e-a6a5-44d5-8e19-6cdedc3b487a)
+
+
+   <!-- <video width="60%" controls>
+      <source src="https://github.com/user-attachments/assets/facac68e-a6a5-44d5-8e19-6cdedc3b487a">
+   </video>
+    -->
+
+- Flow
+
+   - Guardrails Disabled
+
+      <img src='images/Guardrails_Disabled.png' width=60%>
+
+   - Guardrails Enabled
+
+      <img src='images/Guardrails_Enabled.png' width=60%>
+
+  
+
 
 ## Prerequisites
 

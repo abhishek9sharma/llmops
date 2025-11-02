@@ -1,0 +1,10 @@
+sequenceDiagram 
+    
+    
+    User->>Chatbot: Who won Ballon d'Or in 2009? 
+    Chatbot->>Guardrails Service:  Who won Ballon d'Or in 2009?
+    Guardrails Service->>LLM: Who won Ballon d'Or in 2009?
+    Chatbot->>User: The winner of the Ballon d'Or in 2009 was <PERSON>.
+    Guardrails Service->>Chatbot:  The winner of the Ballon d'Or in 2009 was <PERSON>.
+    LLM->> Guardrails Service:The winner of the Ballon d'Or in 2009 was Lionel Messi.
+    

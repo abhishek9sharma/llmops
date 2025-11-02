@@ -31,7 +31,8 @@ format:
 
 up_with_build:
 	docker-compose up -d --build 
-	sleep 30
+	sleep 120
+	echo "http://localhost:8501/"
 
 up_with_build-dev:
 	docker-compose build --build-arg TARGET=dev
@@ -45,7 +46,8 @@ build-dev:
 
 up:
 	docker-compose up -d
-	sleep 30
+	sleep 120
+	echo http://localhost:8501/
 
 down:
 	docker-compose down
