@@ -13,4 +13,4 @@ ENTRYPOINT ["/entrypoint.sh"]
 # # This ensures the model is available upon startup
 # # The sleep command is added to ensure Ollama server is fully initialized before attempting to pull
 # # Adjust sleep duration if necessary based on your system's performance
-# ENTRYPOINT ["/bin/bash", "-c", "sleep 5 && ollama pull llama3.2:1b && ollama serve"]
+# ENTRYPOINT ["/bin/bash", "-c", "sleep 5 && ollama pull tinyllama:1.1b && ollama serve"]

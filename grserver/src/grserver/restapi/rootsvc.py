@@ -22,7 +22,7 @@ async def startup_event():
     await asyncio.sleep(10)
 
     test_payload = {
-        "model": "llama3.2:1b",
+        "model": "tinyllama:1.1b",
         "messages": [
             {"role": "user", "content": "Hello, this is a startup test message"}
         ],

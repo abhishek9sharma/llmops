@@ -86,7 +86,7 @@ with st.sidebar:
 
     model_name = st.sidebar.selectbox(
         "Model Name",
-        ["llama3.1:8b", "deepseek-chat", "gpt-3.5-turbo"],
+        ["tinyllama:1.1b", "deepseek-chat", "gpt-3.5-turbo"],
         help="The model to use for chat completions",
     )
 

@@ -25,8 +25,8 @@ async def acompletion_gg(payload_in: ChatCompletionsReq, api_key, api_base, guar
     try:
         # Validate input messages if guard is present
         if guard is not None:
-            pass
-            for msg in input_msgs:
+            # validate only latest message
+            for msg in input_msgs[-1]:
                 try:
                     await guard.validate(msg.content)
                     # pass
