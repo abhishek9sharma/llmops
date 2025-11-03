@@ -21,14 +21,15 @@ async def acompletion_gg(payload_in: ChatCompletionsReq, api_key, api_base, guar
     open_ai_payload = open_ai_payload.model_dump()
     input_msgs = payload_in.messages
     client = AsyncOpenAI(api_key=api_key, base_url=api_base)
-
+    #print(input_msgs)
+    latest_mesage = input_msgs[-1]
     try:
         # Validate input messages if guard is present
         if guard is not None:
             # validate only latest message
-            for msg in input_msgs[-1]:
+            #for msg in input_msgs:
                 try:
-                    await guard.validate(msg.content)
+                    await guard.validate(latest_mesage.content)
                     # pass
                 except Exception as e:
                     # raise e
