@@ -13,6 +13,7 @@ A simple llmops
    [![gr](images/demo.jpg)](https://github.com/user-attachments/assets/facac68e-a6a5-44d5-8e19-6cdedc3b487a)
 
 
+
    <!-- <video width="60%" controls>
       <source src="https://github.com/user-attachments/assets/facac68e-a6a5-44d5-8e19-6cdedc3b487a">
    </video>
@@ -25,10 +26,8 @@ A simple llmops
       <img src='images/Guardrails_Disabled.png' width=60%>
 
    - Guardrails Enabled
-
-      <img src='images/Guardrails_Enabled.png' width=60%>
-
-  
+   
+       <img src='images/Guardrails_Enabled.png' width=60%>
 
 
 ## Prerequisites
