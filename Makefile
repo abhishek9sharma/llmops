@@ -46,7 +46,6 @@ build-dev:
 
 up:
 	docker-compose up -d
-	sleep 120
 	echo http://localhost:8501/
 
 down:

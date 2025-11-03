@@ -1,7 +1,8 @@
 import json
 import logging
 from typing import Dict, List, Optional
-
+import time
+from tenacity import retry, wait_fixed, stop_after_attempt
 import openai
 import requests
 import streamlit as st
@@ -13,7 +14,7 @@ if "messages" not in st.session_state:
 if "api_key" not in st.session_state:
     st.session_state.api_key = ""
 
-
+#@retry(wait=wait_fixed(10), stop=stop_after_attempt(10))
 def send_chat_request(
     messages: List[Dict],
     endpoint: str,
@@ -29,36 +30,37 @@ def send_chat_request(
         GR_URL = "http://guardrails-service:8001/guarded/v1"
 
     # GR_URL = "http://guardrails-service:8001/guarded/v1"
-    try:
-        client = openai.OpenAI(
-            api_key=st.session_state.api_key,
-            base_url=GR_URL,  # If using a custom endpoint
-        )
-        custom_headers = {
-            "apibase": endpoint,
-        }
-        if len(selected_guards) > 0:
-            custom_headers["guards"] = ",".join(selected_guards)
+    r = 0
+    retries = 10
+    while r<retries:
+        try:
+            client = openai.OpenAI(
+                api_key=st.session_state.api_key,
+                base_url=GR_URL,  # If using a custom endpoint
+                max_retries=100
+            )
+            custom_headers = {
+                "apibase": endpoint,
+            }
+            if len(selected_guards) > 0:
+                custom_headers["guards"] = ",".join(selected_guards)
 
-        logging.info(
-            f"SENDING request to {GR_URL} with custom headers {custom_headers}"
-        )
-        response_stream = client.chat.completions.create(
-            model=model_name,
-            messages=[{"role": m["role"], "content": m["content"]} for m in messages],
-            timeout=120,
-            stream=True,
-            extra_headers=custom_headers,
-        )
-        # st.write(response_stream)
-        return response_stream
-    except openai.APIError as e:
-        st.error(f"API request failed: {str(e)}")
+            logging.info(
+                f"SENDING request to {GR_URL} with custom headers {custom_headers}"
+            )
+            response_stream = client.chat.completions.create(
+                model=model_name,
+                messages=[{"role": m["role"], "content": m["content"]} for m in messages],
+                timeout=500,
+                stream=True,
+                extra_headers=custom_headers,
+            )
+            return response_stream
+        except Exception as e:
+            print("sleeping")
+            r+=1
+            time.sleep(5)
         return None
-    except Exception as e:
-        st.error(f"Unexpected error: {str(e)}")
-        return None
-
 
 # App layout
 st.title("🤖 AI Chat Assistant with Guardrails Functionality")
@@ -142,6 +144,7 @@ if prompt := st.chat_input("Type your message here..."):
             st.error("Please enter your API key in the sidebar")
         else:
             with st.spinner("Thinking..."):
+
                 stream = send_chat_request(
                     st.session_state.messages,
                     endpoint,
@@ -158,6 +161,9 @@ if prompt := st.chat_input("Type your message here..."):
                     )
                 else:
                     st.error("Failed to get response from API")
+                    # resp = "I have issues connectig to backend please use a diffetent end point or try later"
+                    # for w in resp.split():
+                    #     yield w +" "
 
 # Status information
 st.sidebar.markdown("---")
